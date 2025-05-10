@@ -110,19 +110,27 @@ class GameOfLife(QMainWindow):
             try:
                 if self.serial_port.in_waiting:
                     line = self.serial_port.readline().decode().strip()
+                    print(f"📡 Recibido desde Arduino: {line}")  # <-- Esto imprime lo recibido
+
                     if line == "r":
                         self.reset_grid()
-                    elif line == "1":  # Infección masiva
+                    elif line == "e1":
+                        print("🔥 Infección Masiva Activada desde Arduino")
                         self.infeccion_masiva()
-                    elif line == "2":  # Infección masiva mutada
+                    elif line == "e2":
+                        print("🧬 Infección Masiva Mutada Activada desde Arduino")
                         self.infeccion_masiva_mutada()
-                    elif line == "3":  # Ritual de purificación
+                    elif line == "e3":
+                        print("🔄 Ritual de Purificación Activado desde Arduino")
                         self.ritual_purificacion()
-                    elif line == "4":  # I am atomic
+                    elif line == "e4":
+                        print("💥 I am Atomic Activado desde Arduino")
                         self.i_am_atomic()
-            except Exception as e:
-                print(f"Error leyendo de Arduino: {e}")
-            time.sleep(0.1)
+
+        except Exception as e:
+            print(f"Error leyendo de Arduino: {e}")
+        time.sleep(0.1)
+
 
     def init_buttons(self):
         # Asignar eventos a los botones de la interfaz gráfica
