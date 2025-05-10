@@ -33,10 +33,47 @@
         <height>400</height>
        </size>
       </property>
+      <widget class="QWidget" name="plotWidget_2" native="true">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>360</y>
+         <width>581</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="a_1">
+          <property name="text">
+           <string>Infección Masiva</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="a_2">
+          <property name="text">
+           <string>Infección Masiva Mutante</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="a_3">
+          <property name="text">
+           <string>Ritual de Purificación</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="a_4">
+          <property name="text">
+           <string>I AM ATOMIC!</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
-    </item>
-    <item>
-     <widget class="QWidget" name="plotWidget_2" native="true"/>
     </item>
     <item>
      <widget class="QSlider" name="speedSlider">

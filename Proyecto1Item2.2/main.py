@@ -3,6 +3,7 @@ import numpy as np
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import QTimer
+from PyQt5.QtMultimedia import QSound
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from scipy.signal import convolve2d
@@ -16,6 +17,13 @@ class GameOfLife(QMainWindow):
     def __init__(self):
         super().__init__()
         loadUi("interface.ui", self)
+        loadUi('interface.ui', self)
+
+        try:
+            self.serial_port = serial.Serial('COM5', 9600, timeout=1)
+            print('✅ Conexión serial establecida correctamente.')
+        except Exception as e:
+            print(f'❌ Error al conectar con Arduino: {e}')
 
         # Dimensiones de la grilla y configuración inicial
         self.grid_size = 100
@@ -117,3 +125,46 @@ if __name__ == "__main__":
     window = GameOfLife()
     window.show()
     sys.exit(app.exec_())
+        # Conexión de botones de interfaz
+    self.a_1.clicked.connect(self.infeccion_masiva)
+    self.a_2.clicked.connect(self.infeccion_mutada)
+    self.a_3.clicked.connect(self.ritual_purificacion)
+    self.a_4.clicked.connect(self.i_am_atomic)
+
+        # Timers
+    self.timer = QTimer()
+    self.timer.timeout.connect(self.update_grid)
+    self.timer.start(500)
+
+    self.serial_thread = threading.Thread(target=self.listen_to_arduino, daemon=True)
+    self.serial_thread.start()
+
+    self.victory_sound = QSound('victory.wav')
+    self.defeat_sound = QSound('defeat.wav')
+    
+    def infeccion_masiva(self):
+        x, y = random.randint(0, self.grid_size - 5), random.randint(0, self.grid_size - 5)
+        self.grid[x:x + 5, y:y + 5] = 0
+        self.life_points[x:x + 5, y:y + 5] = 200
+
+    def infeccion_mutada(self):
+        x, y = random.randint(6, self.grid_size - 7), random.randint(6, self.grid_size - 7)
+        pulsar_pattern = [(0, 2), (0, 3), (0, 4), (2, 0), (2, 5), (3, 0), (3, 5), (4, 0), (4, 5),
+                          (5, 2), (5, 3), (5, 4)]
+        for dx, dy in pulsar_pattern:
+            self.grid[x + dx, y + dy] = 0
+            self.grid[x - dx, y + dy] = 0
+            self.grid[x + dx, y - dy] = 0
+            self.grid[x - dx, y - dy] = 0
+            self.life_points[x + dx, y + dy] = 200
+
+    def ritual_purificacion(self):
+        x, y = random.randint(0, self.grid_size - 15), random.randint(0, self.grid_size - 15)
+        area = self.grid[x:x + 15, y:y + 15]
+        prob = np.random.rand(15, 15)
+        area[(area == 0) & (prob < 0.8)] = 1
+
+    def i_am_atomic(self):
+        x, y = random.randint(0, self.grid_size - 25), random.randint(0, self.grid_size - 25)
+        self.grid[x:x + 25, y:y + 25] = 2
+        self.life_points[x:x + 25, y:y + 25] = 100
