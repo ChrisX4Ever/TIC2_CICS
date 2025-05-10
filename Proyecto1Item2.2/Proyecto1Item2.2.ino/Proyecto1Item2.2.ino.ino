@@ -1,81 +1,65 @@
-// Pines de conexión
-const int ledRojo = 9;
+const int boton1 = 12;    // Infección masiva
+const int boton2 = 11;    // Infección masiva mutada
+const int boton3 = 10;    // Ritual de purificación
+const int boton4 = 8;     // I am atomic!
+
 const int ledVerde = 6;
 const int ledAzul = 3;
-const int buzzer = 5;
-const int botonReset = 13;
+const int ledRojo = 9;
 
-// Variables de control
-bool estadoBoton = false;
 String comando = "";
-int poblacion = 0;
 
 void setup() {
     Serial.begin(9600);
-    pinMode(ledRojo, OUTPUT);
+    
+    pinMode(boton1, INPUT_PULLUP);
+    pinMode(boton2, INPUT_PULLUP);
+    pinMode(boton3, INPUT_PULLUP);
+    pinMode(boton4, INPUT_PULLUP);
+
     pinMode(ledVerde, OUTPUT);
     pinMode(ledAzul, OUTPUT);
-    pinMode(buzzer, OUTPUT);
-    pinMode(botonReset, INPUT_PULLUP);
+    pinMode(ledRojo, OUTPUT);
 
-    // Apagar todos los LEDs inicialmente
-    digitalWrite(ledRojo, LOW);
     digitalWrite(ledVerde, LOW);
     digitalWrite(ledAzul, LOW);
+    digitalWrite(ledRojo, LOW);
 }
 
 void loop() {
-    // Lectura del botón físico
-    if (digitalRead(botonReset) == LOW && !estadoBoton) {
-        estadoBoton = true;
-        Serial.println("r");
-        delay(500); // Anti-rebote
-    } else if (digitalRead(botonReset) == HIGH) {
-        estadoBoton = false;
-    }
-
-    // Recepción de datos seriales
     if (Serial.available()) {
         comando = Serial.readStringUntil('\n');
-        
-        if (comando.startsWith("p-")) {
-            poblacion = comando.substring(2).toInt();
-            actualizarLEDs(poblacion);
-        } else if (comando.startsWith("a-")) {
-            int evento = comando.substring(2).toInt();
-            activarEvento(evento);
+        comando.trim();
+
+        if (comando == "sobrepoblacion") {
+            digitalWrite(ledVerde, HIGH);
+            digitalWrite(ledAzul, LOW);
+            digitalWrite(ledRojo, LOW);
+        } else if (comando == "estabilidad") {
+            digitalWrite(ledVerde, LOW);
+            digitalWrite(ledAzul, HIGH);
+            digitalWrite(ledRojo, LOW);
+        } else if (comando == "subpoblacion") {
+            digitalWrite(ledVerde, LOW);
+            digitalWrite(ledAzul, LOW);
+            digitalWrite(ledRojo, HIGH);
         }
     }
-}
 
-void actualizarLEDs(int poblacion) {
-    // Apagar todos los LEDs antes de actualizar
-    digitalWrite(ledVerde, LOW);
-    digitalWrite(ledRojo, LOW);
-    digitalWrite(ledAzul, LOW);
-
-    if (poblacion < 200) {
-        digitalWrite(ledVerde, HIGH); // Estabilidad
-    } else if (poblacion >= 200 && poblacion <= 500) {
-        digitalWrite(ledAzul, HIGH);  // Subpoblación
-    } else {
-        digitalWrite(ledRojo, HIGH);  // Sobrepoblación
+    if (digitalRead(boton1) == LOW) {
+        Serial.println("e1");
+        delay(300);  // Anti-rebote
     }
-}
-
-void activarEvento(int evento) {
-    switch (evento) {
-        case 1:
-            tone(buzzer, 1000, 500); // Sonido de infección masiva
-            break;
-        case 2:
-            tone(buzzer, 1200, 500); // Sonido de infección masiva mutada
-            break;
-        case 3:
-            tone(buzzer, 800, 500); // Sonido de ritual de purificación
-            break;
-        case 4:
-            tone(buzzer, 400, 500); // Sonido de "I am Atomic!"
-            break;
+    if (digitalRead(boton2) == LOW) {
+        Serial.println("e2");
+        delay(300);
+    }
+    if (digitalRead(boton3) == LOW) {
+        Serial.println("e3");
+        delay(300);
+    }
+    if (digitalRead(boton4) == LOW) {
+        Serial.println("e4");
+        delay(300);
     }
 }
