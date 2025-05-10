@@ -38,12 +38,25 @@ class GameOfLife(QMainWindow):
         # Timers
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_grid)
-        self.timer.start(100)
+        self.timer.start(500)  # Iniciar con 500ms por defecto (2 FPS aprox)
 
         # Conexión Serial
         self.serial_port = serial.Serial('COM5', 9600, timeout=1)
         self.serial_thread = threading.Thread(target=self.listen_to_arduino, daemon=True)
         self.serial_thread.start()
+
+        # Conexión del slider para controlar la velocidad
+        self.speedSlider.valueChanged.connect(self.adjust_speed)
+
+    def adjust_speed(self):
+        """
+        Ajusta la velocidad del timer en función del valor del slider.
+        """
+        # Valor del slider (0-100) convertido en un intervalo de 50ms a 2000ms
+        speed = 2050 - (self.speedSlider.value() * 20)
+        if speed < 50: speed = 50  # Valor mínimo para evitar que sea 0
+        print(f"Velocidad ajustada a: {speed} ms por actualización")
+        self.timer.setInterval(speed)
 
     def update_grid(self):
         kernel = np.array([[1, 1, 1],
@@ -82,15 +95,6 @@ class GameOfLife(QMainWindow):
                     elif zombies[i, j] >= 2:
                         self.grid[i, j] = 0
                         self.life_points[i, j] = 100
-
-        # Verificar condiciones de victoria o derrota
-        if np.all((self.grid == 1) | (self.grid == 2)):
-            print("VICTORIA: Todas las células son humanas")
-            self.reset_grid()
-
-        elif np.all((self.grid == 0) | (self.grid == 2)):
-            print("DERROTA: Todas las células son zombies")
-            self.reset_grid()
 
         self.img.set_data(self.grid)
         self.canvas.draw()
