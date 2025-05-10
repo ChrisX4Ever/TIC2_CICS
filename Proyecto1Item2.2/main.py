@@ -127,9 +127,9 @@ class GameOfLife(QMainWindow):
                         print("💥 I am Atomic Activado desde Arduino")
                         self.i_am_atomic()
 
-        except Exception as e:
-            print(f"Error leyendo de Arduino: {e}")
-        time.sleep(0.1)
+            except Exception as e:
+                print(f"Error leyendo de Arduino: {e}")
+                time.sleep(0.1)
 
 
     def init_buttons(self):
