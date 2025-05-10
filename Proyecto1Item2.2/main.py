@@ -12,6 +12,7 @@ import time
 import random
 from matplotlib.colors import ListedColormap
 
+
 class GameOfLife(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -38,7 +39,7 @@ class GameOfLife(QMainWindow):
         # Timers
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_grid)
-        self.timer.start(500)  # Iniciar con 500ms por defecto (2 FPS aprox)
+        self.timer.start(250)  # Iniciar con 250ms por defecto (4 FPS aprox)
 
         # Conexión Serial
         self.serial_port = serial.Serial('COM5', 9600, timeout=1)
@@ -52,9 +53,8 @@ class GameOfLife(QMainWindow):
         """
         Ajusta la velocidad del timer en función del valor del slider.
         """
-        # Valor del slider (0-100) convertido en un intervalo de 50ms a 2000ms
-        speed = 2050 - (self.speedSlider.value() * 20)
-        if speed < 50: speed = 50  # Valor mínimo para evitar que sea 0
+        speed = 250 - (self.speedSlider.value() * 2)
+        if speed < 50: speed = 50
         print(f"Velocidad ajustada a: {speed} ms por actualización")
         self.timer.setInterval(speed)
 
@@ -69,13 +69,13 @@ class GameOfLife(QMainWindow):
 
         for i in range(self.grid_size):
             for j in range(self.grid_size):
-                if self.grid[i, j] == 1:  # Humano
+                if self.grid[i, j] == 1:
                     self.life_points[i, j] -= 5 * zombies[i, j]
                     if self.life_points[i, j] <= 0:
                         self.grid[i, j] = 0
                         self.life_points[i, j] = 100
 
-                elif self.grid[i, j] == 0:  # Zombie
+                elif self.grid[i, j] == 0:
                     if humans[i, j] < 2:
                         self.life_points[i, j] -= 10
                     elif humans[i, j] > 3:
@@ -88,7 +88,7 @@ class GameOfLife(QMainWindow):
                         else:
                             self.grid[i, j] = 2
 
-                elif self.grid[i, j] == 2:  # Muerto
+                elif self.grid[i, j] == 2:
                     if humans[i, j] >= 2 and zombies[i, j] < 2:
                         self.grid[i, j] = 1
                         self.life_points[i, j] = 100
@@ -104,8 +104,17 @@ class GameOfLife(QMainWindow):
             try:
                 if self.serial_port.in_waiting:
                     line = self.serial_port.readline().decode().strip()
+                    print(f"📡 Recibido desde Arduino: {line}")
                     if line == "r":
                         self.reset_grid()
+                    elif line == "e1":
+                        self.infeccion_masiva()
+                    elif line == "e2":
+                        self.infeccion_masiva_mutada()
+                    elif line == "e3":
+                        self.ritual_purificacion()
+                    elif line == "e4":
+                        self.i_am_atomic()
             except Exception as e:
                 print(f"Error leyendo de Arduino: {e}")
             time.sleep(0.1)
@@ -113,6 +122,7 @@ class GameOfLife(QMainWindow):
     def reset_grid(self):
         self.grid = np.random.choice([0, 1, 2], self.grid_size**2, p=[0.2, 0.5, 0.3]).reshape(self.grid_size, self.grid_size)
         self.life_points = np.random.randint(50, 201, size=(self.grid_size, self.grid_size))
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
