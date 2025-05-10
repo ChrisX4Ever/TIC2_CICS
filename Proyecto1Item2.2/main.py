@@ -15,6 +15,8 @@ class GameOfLife(QMainWindow):
         super().__init__()
         loadUi("interface.ui", self)  # Asegúrate de que el archivo UI se llama interface.ui
 
+        self.speedSlider.valueChanged.connect(self.on_slider_value_changed)
+
         self.grid_size = 100
         self.grid = np.random.choice([0, 1], self.grid_size**2, p=[0.8, 0.2]).reshape(self.grid_size, self.grid_size)
 
@@ -28,7 +30,7 @@ class GameOfLife(QMainWindow):
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_grid)
-        self.timer.start(100)  # Actualiza cada 100 ms
+        self.timer.start(self.speedSlider.value() * 100)  # Actualiza cada 100 ms
 
         self.serial_port = serial.Serial('COM5', 9600, timeout=1)  # Cambia COM3 si es necesario
         self.serial_thread = threading.Thread(target=self.listen_to_arduino, daemon=True)
@@ -37,6 +39,11 @@ class GameOfLife(QMainWindow):
         self.serial_timer = QTimer()
         self.serial_timer.timeout.connect(self.send_alive_cells_to_arduino)
         self.serial_timer.start(10000)  # Cada 10 segundos
+
+    def on_slider_value_changed(self, value):
+        gameSpeed = value * 100
+        self.timer.setInterval(500 - gameSpeed)
+        print(500 - gameSpeed)
 
     def update_grid(self):
         kernel = np.array([[1, 1, 1],
@@ -55,6 +62,7 @@ class GameOfLife(QMainWindow):
     def send_alive_cells_to_arduino(self):
         if self.serial_port.is_open:
             alive_cells = int(np.sum(self.grid))
+            print(f"Enviando comando a Arduino: {alive_cells}")
             self.serial_port.write(f"{alive_cells}\n".encode())
 
     def listen_to_arduino(self):
