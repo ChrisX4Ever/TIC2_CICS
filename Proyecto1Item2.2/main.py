@@ -15,7 +15,7 @@ import random
 class GameOfLife(QMainWindow):
     def __init__(self):
         super().__init__()
-        loadUi("interface2.ui", self)
+        loadUi("interface.ui", self)
 
         self.speedSlider.valueChanged.connect(self.on_slider_value_changed)
 
