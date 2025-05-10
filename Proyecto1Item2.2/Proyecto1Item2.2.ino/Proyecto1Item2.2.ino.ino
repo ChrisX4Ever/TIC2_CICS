@@ -1,65 +1,67 @@
-const int boton1 = 12;    // Infección masiva
-const int boton2 = 11;    // Infección masiva mutada
-const int boton3 = 10;    // Ritual de purificación
-const int boton4 = 8;     // I am atomic!
+const int buttonPin13 = 13;  // Pin para el botón de reset
+const int buttonPin12 = 12;  // Infección masiva
+const int buttonPin11 = 11;  // Infección masiva mutada
+const int buttonPin10 = 10;  // Ritual de purificación
+const int buttonPin8 = 8;    // I am atomic!
 
-const int ledVerde = 6;
-const int ledAzul = 3;
-const int ledRojo = 9;
+bool lastState13 = HIGH;
+bool lastState12 = HIGH;
+bool lastState11 = HIGH;
+bool lastState10 = HIGH;
+bool lastState8 = HIGH;
 
-String comando = "";
+unsigned long debounceDelay = 50;  // 50 ms para evitar rebotes
+unsigned long lastDebounceTime = 0;
 
 void setup() {
-    Serial.begin(9600);
-    
-    pinMode(boton1, INPUT_PULLUP);
-    pinMode(boton2, INPUT_PULLUP);
-    pinMode(boton3, INPUT_PULLUP);
-    pinMode(boton4, INPUT_PULLUP);
-
-    pinMode(ledVerde, OUTPUT);
-    pinMode(ledAzul, OUTPUT);
-    pinMode(ledRojo, OUTPUT);
-
-    digitalWrite(ledVerde, LOW);
-    digitalWrite(ledAzul, LOW);
-    digitalWrite(ledRojo, LOW);
+  Serial.begin(9600);
+  pinMode(buttonPin13, INPUT_PULLUP);
+  pinMode(buttonPin12, INPUT_PULLUP);
+  pinMode(buttonPin11, INPUT_PULLUP);
+  pinMode(buttonPin10, INPUT_PULLUP);
+  pinMode(buttonPin8, INPUT_PULLUP);
 }
 
 void loop() {
-    if (Serial.available()) {
-        comando = Serial.readStringUntil('\n');
-        comando.trim();
+  unsigned long currentTime = millis();
 
-        if (comando == "sobrepoblacion") {
-            digitalWrite(ledVerde, HIGH);
-            digitalWrite(ledAzul, LOW);
-            digitalWrite(ledRojo, LOW);
-        } else if (comando == "estabilidad") {
-            digitalWrite(ledVerde, LOW);
-            digitalWrite(ledAzul, HIGH);
-            digitalWrite(ledRojo, LOW);
-        } else if (comando == "subpoblacion") {
-            digitalWrite(ledVerde, LOW);
-            digitalWrite(ledAzul, LOW);
-            digitalWrite(ledRojo, HIGH);
-        }
-    }
+  if ((digitalRead(buttonPin13) == LOW) && (lastState13 == HIGH) && (currentTime - lastDebounceTime > debounceDelay)) {
+    Serial.println("r");
+    lastState13 = LOW;
+    lastDebounceTime = currentTime;
+  } else if (digitalRead(buttonPin13) == HIGH) {
+    lastState13 = HIGH;
+  }
 
-    if (digitalRead(boton1) == LOW) {
-        Serial.println("e1");
-        delay(300);  // Anti-rebote
-    }
-    if (digitalRead(boton2) == LOW) {
-        Serial.println("e2");
-        delay(300);
-    }
-    if (digitalRead(boton3) == LOW) {
-        Serial.println("e3");
-        delay(300);
-    }
-    if (digitalRead(boton4) == LOW) {
-        Serial.println("e4");
-        delay(300);
-    }
+  if ((digitalRead(buttonPin12) == LOW) && (lastState12 == HIGH) && (currentTime - lastDebounceTime > debounceDelay)) {
+    Serial.println("e1");
+    lastState12 = LOW;
+    lastDebounceTime = currentTime;
+  } else if (digitalRead(buttonPin12) == HIGH) {
+    lastState12 = HIGH;
+  }
+
+  if ((digitalRead(buttonPin11) == LOW) && (lastState11 == HIGH) && (currentTime - lastDebounceTime > debounceDelay)) {
+    Serial.println("e2");
+    lastState11 = LOW;
+    lastDebounceTime = currentTime;
+  } else if (digitalRead(buttonPin11) == HIGH) {
+    lastState11 = HIGH;
+  }
+
+  if ((digitalRead(buttonPin10) == LOW) && (lastState10 == HIGH) && (currentTime - lastDebounceTime > debounceDelay)) {
+    Serial.println("e3");
+    lastState10 = LOW;
+    lastDebounceTime = currentTime;
+  } else if (digitalRead(buttonPin10) == HIGH) {
+    lastState10 = HIGH;
+  }
+
+  if ((digitalRead(buttonPin8) == LOW) && (lastState8 == HIGH) && (currentTime - lastDebounceTime > debounceDelay)) {
+    Serial.println("e4");
+    lastState8 = LOW;
+    lastDebounceTime = currentTime;
+  } else if (digitalRead(buttonPin8) == HIGH) {
+    lastState8 = HIGH;
+  }
 }
