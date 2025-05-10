@@ -17,6 +17,8 @@ class GameOfLife(QMainWindow):
         super().__init__()
         loadUi("interface.ui", self)
 
+        self.speedSlider.valueChanged.connect(self.on_slider_value_changed)
+
         # Dimensiones de la grilla y configuración inicial
         self.grid_size = 100
         self.grid = np.random.choice([0, 1, 2], self.grid_size**2, p=[0.2, 0.5, 0.3]).reshape(self.grid_size, self.grid_size)
@@ -33,7 +35,7 @@ class GameOfLife(QMainWindow):
         # Timers
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_grid)
-        self.timer.start(100)
+        self.timer.start(self.speedSlider.value() * 100)
 
         # Conexión Serial
         self.serial_port = serial.Serial('COM5', 9600, timeout=1)
@@ -45,6 +47,11 @@ class GameOfLife(QMainWindow):
 
         # Configuración de botones
         self.init_buttons()
+
+    def on_slider_value_changed(self, value):
+        gameSpeed = value * 100
+        self.timer.setInterval(500 - gameSpeed)
+        print(500 - gameSpeed)
 
     def update_grid(self):
         kernel = np.array([[1, 1, 1],
