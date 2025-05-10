@@ -43,7 +43,7 @@ class GameOfLife(QMainWindow):
         self.timer.start(self.default_speed)  # Velocidad inicial
 
         # Conexión Serial
-        self.serial_port = serial.Serial('COM3', 9600, timeout=1)
+        self.serial_port = serial.Serial('COM5', 9600, timeout=1)
         self.serial_thread = threading.Thread(target=self.listen_to_arduino, daemon=True)
         self.serial_thread.start()
 
