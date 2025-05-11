@@ -3,7 +3,7 @@
 
 // Definición de pines
 const int buzzerPin = 5;
-const int ledPins[5] = {9, 3, 4, 7, 2};
+const int ledPins[5] = {6, 3, 4, 7, 2};
 const int buttonPins[5] = {13, 12, 11, 10, 8};
 
 // Definición de tonos para cada LED/Botón
