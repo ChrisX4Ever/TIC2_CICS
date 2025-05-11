@@ -1,6 +1,7 @@
-const int botones[] = {7, 8, 9, 10, 11};  // Pines de los botones
-const int leds[] = {2, 3, 4, 5, 6};       // Pines de los LEDs
-const int buzzer = 12;                    // Pin del buzzer
+const int botones[] = {13, 12, 11, 10, 8};  // Pines de los botones
+const int leds[] = {2, 3, 4, 5, 6};         // Pines de los LEDs
+const int buzzer = 9;                       // Pin del buzzer
+const int notas[] = {261, 294, 329, 392, 440}; // Frecuencias en Hz
 
 void setup() {
     for (int i = 0; i < 5; i++) {
@@ -11,12 +12,25 @@ void setup() {
 }
 
 void loop() {
+    bool botonPresionado = false;
+
     for (int i = 0; i < 5; i++) {
-        if (digitalRead(botones[i]) == LOW) {  // Botón presionado
-            digitalWrite(leds[i], HIGH);  // Enciende LED
-            tone(buzzer, 200 + (i * 100)); // Suena una nota diferente
-        } else {
-            digitalWrite(leds[i], LOW);  // Apaga LED
+        if (digitalRead(botones[i]) == LOW) {
+            botonPresionado = true;
+            digitalWrite(leds[i], HIGH);
+            tone(buzzer, notas[i]);          // Reproduce la nota correspondiente
+            delay(500);                      // Espera 0.5 segundos
+            noTone(buzzer);                  // Detiene el sonido
+            digitalWrite(leds[i], LOW);      // Apaga el LED
+
+            // Espera a que se suelte el botón antes de continuar
+            while (digitalRead(botones[i]) == LOW);
+            delay(50); // Pequeño retardo para evitar rebotes
+            break; // Evita detectar otros botones durante este ciclo
         }
+    }
+
+    if (!botonPresionado) {
+        noTone(buzzer); // Asegura que el buzzer esté apagado si no hay pulsaciones
     }
 }
