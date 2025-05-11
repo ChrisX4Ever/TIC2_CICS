@@ -1,9 +1,10 @@
+#define TONE_PITCH 440
 #include <TonePitch.h>
 
 // Definición de pines
 const int buzzerPin = 5;
 const int ledPins[5] = {9, 3, 4, 7, 2};
-const int buttonPins[5] = {13, 12, 11, 10, 18};
+const int buttonPins[5] = {13, 12, 11, 10, 8};
 
 // Definición de tonos para cada LED/Botón
 int notes[5] = {NOTE_C4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_G4};
@@ -15,7 +16,6 @@ int puntuacion = 0;
 int racha = 0;
 int multiplicador = 1;
 bool gameOver = false;
-TonePitch tonePlayer;
 
 // Canciones predefinidas (se pueden expandir)
 int marioBros[] = {0, 2, 1, 3, 4, 0, 2, 1, 3, 4};
@@ -28,8 +28,7 @@ int tamanoCancion;
 // Configuración inicial
 void setup() {
     Serial.begin(9600);
-    tonePlayer.begin(buzzerPin);
-    
+
     for (int i = 0; i < 5; i++) {
         pinMode(ledPins[i], OUTPUT);
         pinMode(buttonPins[i], INPUT_PULLUP);
@@ -94,7 +93,7 @@ void iniciarJuego() {
         
         int nota = cancionSeleccionada[i];
         digitalWrite(ledPins[nota], HIGH);
-        tonePlayer.play(notes[nota], velocidad);
+        tone(buzzerPin, notes[nota], velocidad);  // Reproduce el sonido usando tone()
 
         unsigned long startTime = millis();
         bool acierto = false;
@@ -107,7 +106,7 @@ void iniciarJuego() {
         }
 
         digitalWrite(ledPins[nota], LOW);
-        tonePlayer.stop();
+        noTone(buzzerPin); // Detiene el sonido
 
         if (acierto) {
             procesarAcierto();
@@ -136,7 +135,7 @@ void procesarError() {
     if (puntuacion <= 0) {
         gameOver = true;
         Serial.println("Game Over!");
-        tonePlayer.play(NOTE_B2, 1000); // Tono de Game Over
+        tone(buzzerPin, NOTE_C3, 1000); // Tono de Game Over ajustado
     }
 }
 
@@ -162,3 +161,6 @@ void finalizarJuego() {
         }
     }
 }
+
+// Función loop vacía para cumplir con el requisito de Arduino
+void loop() {}
