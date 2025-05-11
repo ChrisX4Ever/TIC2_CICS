@@ -16,6 +16,7 @@ int puntuacion = 0;
 int racha = 0;
 int multiplicador = 1;
 bool gameOver = false;
+int erroresConsecutivos = 0;
 
 // Canciones predefinidas (se pueden expandir)
 int marioBros[] = {0, 2, 1, 3, 4, 0, 2, 1, 3, 4};
@@ -87,6 +88,7 @@ void iniciarJuego() {
     racha = 0;
     multiplicador = 1;
     gameOver = false;
+    erroresConsecutivos = 0;
 
     for (int i = 0; i < tamanoCancion; i++) {
         if (gameOver) break;
@@ -120,6 +122,7 @@ void iniciarJuego() {
 void procesarAcierto() {
     puntuacion += 10 * multiplicador;
     racha++;
+    erroresConsecutivos = 0; // Reinicia los errores si acierta
     
     if (racha == 5) multiplicador = 2;
     else if (racha == 10) multiplicador = 4;
@@ -131,7 +134,14 @@ void procesarError() {
     puntuacion -= 5;
     racha = 0;
     multiplicador = 1;
+    erroresConsecutivos++;
 
+    if (erroresConsecutivos >= 3) {
+        gameOver = true;
+        Serial.println("¡Juego terminado! Has cometido 3 errores consecutivos.");
+        tone(buzzerPin, NOTE_C3, 1000); // Tono de Game Over ajustado
+    }
+    
     if (puntuacion <= 0) {
         gameOver = true;
         Serial.println("Game Over!");
