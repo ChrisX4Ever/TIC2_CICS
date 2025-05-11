@@ -1,0 +1,11 @@
+- Buzzer: Pin 5
+- LED 1: Pin 9
+- LED 2: Pin 3
+- LED 3: Pin 4
+- LED 4: Pin 7
+- LED 5: Pin 2
+- Botón 1: Pin 13
+- Botón 2: Pin 12
+- Botón 3: Pin 11
+- Botón 4: Pin 10
+- Botón 5: Pin 18
